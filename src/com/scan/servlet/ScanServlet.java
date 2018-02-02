@@ -16,8 +16,10 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONObject;
 
 import com.google.gson.Gson;
+import com.scan.bean.LoginUser;
 import com.scan.bean.LoginUserBean;
 import com.scan.util.GetRequestJsonUtils;
+import com.scan.util.JSONResult;
 
 /**
  * Servlet implementation class ScanServlet
@@ -52,9 +54,15 @@ public class ScanServlet extends HttpServlet {
 		PrintWriter printWriter = response.getWriter();
 		String resp = "{\"message\":" + "登录成功," + "\"statusCode\":" + "200," + "\"success\":" + "true," + "\"data\":" + "{\"id\":" + "2," + "\"userName\":"+ "\"js004\","+"\"realName\":"+ "\"张三\","+"\"token\":"+ "\"d61f4f7139eef90\""+"}" + "}";
 		//String resp = "{\"message\":" + "登录失败," + "\"statusCode\":" + "201," + "\"success\":" + "false" + "\"data\":" + "null" + "}";
-		printWriter.print(resp);
+		/*printWriter.print(resp);
 		System.out.println("resp:"+resp);
-		System.out.println("requestJsonString:" + requestJsonString);
+		System.out.println("requestJsonString:" + requestJsonString);*/
+		
+		JSONResult<String> jsonResult = new JSONResult<String>(null, "添加失败", false);
+		
+		jsonResult.setMessage("扫码添加成功");
+        jsonResult.setStatusCode(200);
+        jsonResult.setSuccess(true);
 		
 		JSONObject jsonObject = JSONObject.fromObject(requestJsonString);
 		String reqNo = jsonObject.getString("reqNo");
@@ -63,8 +71,19 @@ public class ScanServlet extends HttpServlet {
 		String password = data.getString("password");
 		String userName = data.getString("userName");
 		
-		System.out.println("reqNo:"+reqNo + ", versionNo:" + versionNo + ", userName:" + userName + ", password:" + password);
 		
+		LoginUser loginUser = new LoginUser();
+        loginUser.setReqNo("101");
+        loginUser.setVersionNo("1.0.0");
+        LoginUser.DataBean dataBean = loginUser.new DataBean(userName,password);
+        loginUser.setData(dataBean);
+		
+		
+		System.out.println("reqNo:"+loginUser.getReqNo() + ", versionNo:" + loginUser.getVersionNo() + ", userName:" + loginUser.getData().getUserName() + ", password:" + loginUser.getData().getPassword());
+		
+		JSONObject oj = JSONObject.fromObject(jsonResult);
+		printWriter.print(oj);
+		System.out.println("oj:" + oj);
 		
 		
 	}
